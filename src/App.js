@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import TodoDetail from './TodoDetail';
 
-function App() {
+export default function App() {
+  const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState([]);
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((response) => response.json())
+      .then((users) => users.slice(0, 5))
+      .then((data) => setUsers(data))
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            <h1 onClick={() => setUserId(user.id)}>{user.name}</h1>
+            {userId === user.id && <TodoDetail userId={userId} />}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+// 1. Display names of up to 5 users from URL (https://jsonplaceholder.typicode.com/users)
+// 2. When user name is clicked, fetch the TODOs for the user from (https://jsonplaceholder.typicode.com/users/${userId}/todos) and display title and Done if the todo is completed otherwise Pending if the todo is not completed.
